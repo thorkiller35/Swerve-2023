@@ -18,6 +18,8 @@ import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import com.ctre.phoenix.ErrorCode;
+import edu.wpi.first.wpilibj.Timer;
  
 public class SwerveModule {
   public int moduleNumber;
@@ -30,9 +32,11 @@ public class SwerveModule {
   private RelativeEncoder driveEncoder;
   private RelativeEncoder integratedAngleEncoder;
   private CANCoder angleEncoder;
+  public double CANcoderInitTime = 0;
  
   private final SparkMaxPIDController driveController;
   private final SparkMaxPIDController angleController;
+  
  
   private final SimpleMotorFeedforward feedforward =
       new SimpleMotorFeedforward(
@@ -86,8 +90,26 @@ public double getTurningVelocity() {
     setAngle(desiredState);
     setSpeed(desiredState, isOpenLoop);
   }
- 
+  private void waitForCanCoder(){
+    /*
+     * Wait for up to 1000 ms for a good CANcoder signal.
+     *
+     * This prevents a race condition during program startup
+     * where we try to synchronize the Falcon encoder to the
+     * CANcoder before we have received any position signal
+     * from the CANcoder.
+     */
+    for (int i = 0; i < 100; ++i) {
+        angleEncoder.getAbsolutePosition();
+        if (angleEncoder.getLastError() == ErrorCode.OK) {
+            break;
+        }
+        Timer.delay(0.010);           
+        CANcoderInitTime += 10;
+    }
+}
   private void resetToAbsolute() {
+    waitForCanCoder();
     double absolutePosition = getCanCoder().getDegrees() - angleOffset.getDegrees();
     integratedAngleEncoder.setPosition(absolutePosition);
   }
@@ -112,6 +134,7 @@ public double getTurningVelocity() {
     angleMotor.enableVoltageCompensation(Constants.Swerve.voltageComp);
     angleMotor.burnFlash();
     resetToAbsolute();
+    
   }
  
   private void configDriveMotor() {
@@ -162,8 +185,9 @@ public double getTurningVelocity() {
   public Rotation2d getCanCoder() {
     return Rotation2d.fromDegrees(angleEncoder.getPosition());
   }
+  
  
-  public SwerveModuleState getState() {
+  public SwerveModuleState getState() {           
     return new SwerveModuleState(driveEncoder.getVelocity(), getAngle());
   }
   public SwerveModulePosition getPosition() {
