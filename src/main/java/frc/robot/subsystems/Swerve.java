@@ -16,6 +16,7 @@ import frc.robot.Constants.Swerve.Mod0;
 import frc.robot.Constants.Swerve.Mod1;
 import frc.robot.Constants.Swerve.Mod2;
 import frc.robot.Constants.Swerve.Mod3;
+import edu.wpi.first.wpilibj.Timer;
  
 import com.kauailabs.navx.frc.AHRS;
  
@@ -43,6 +44,7 @@ public class Swerve extends SubsystemBase {
       new SwerveModule(2, Constants.Swerve.Mod2.constants),
       new SwerveModule(3, Constants.Swerve.Mod3.constants)
     };
+    Timer.delay(1);
     
     swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), new SwerveModulePosition[]{
       mSwerveMods[0].getPosition(), mSwerveMods[1].getPosition(), mSwerveMods[2].getPosition(), mSwerveMods[3].getPosition()
@@ -55,6 +57,7 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putData("Field", field);
   }
  
+  
   public void drive(
       Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
     SwerveModuleState[] swerveModuleStates =
@@ -106,7 +109,8 @@ public class Swerve extends SubsystemBase {
         ? Rotation2d.fromDegrees(360 - gyro.getYaw())
         : Rotation2d.fromDegrees(gyro.getYaw());
   }
- 
+  
+  
   @Override
   public void periodic() {
     
