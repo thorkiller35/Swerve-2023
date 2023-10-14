@@ -108,10 +108,13 @@ public double getTurningVelocity() {
         CANcoderInitTime += 10;
     }
 }
-  private void resetToAbsolute() {
+  public void resetToAbsolute() {
     waitForCanCoder();
     double absolutePosition = getCanCoder().getDegrees() - angleOffset.getDegrees();
     integratedAngleEncoder.setPosition(absolutePosition);
+  }
+  public void set0(){
+    angleEncoder.setPosition(0);
   }
  
   private void configAngleEncoder() {
