@@ -26,7 +26,7 @@ public class Swerve extends SubsystemBase {
   private final AHRS gyro;
  
   private SwerveDriveOdometry swerveOdometry;
-  private  static SwerveModule[] mSwerveMods;
+  private static SwerveModule[] mSwerveMods;
  
   private Field2d field;
  
@@ -106,13 +106,27 @@ public class Swerve extends SubsystemBase {
   public void zeroGyro() {
     gyro.reset();
   }
+  public void module(){
+    for(SwerveModule  mod: mSwerveMods){
+      mod.resetToAbsolute();
+
+    }
+    
+  }
+  public void set0(){
+    for(SwerveModule  mod: mSwerveMods){
+      mod.set0();
+
+    }
+    
+  }
  
   public Rotation2d getYaw() {
     return (Constants.Swerve.invertGyro)
-        ? Rotation2d.fromDegrees(360 - gyro.getYaw())
-        : Rotation2d.fromDegrees(gyro.getYaw());
+        ? Rotation2d.fromRadians(360 - gyro.getYaw())
+        : Rotation2d.fromRadians(gyro.getYaw());
   }
-  public static void resetModulesToAbsolute() {
+  private void resetModulesToAbsolute() {
     for (SwerveModule mod : mSwerveMods){
       mod.resetToAbsolute();
 
@@ -128,9 +142,9 @@ public class Swerve extends SubsystemBase {
  
     for (SwerveModule mod : mSwerveMods) {
       SmartDashboard.putNumber(
-          "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
+          "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getRadians());
       SmartDashboard.putNumber(
-          "Mod " + mod.moduleNumber + " Integrated", mod.getState().angle.getDegrees());
+          "Mod " + mod.moduleNumber + " Integrated", mod.getState().angle.getRadians());
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
     }
