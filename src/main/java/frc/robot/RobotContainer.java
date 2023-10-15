@@ -24,6 +24,7 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
   /* Controllers */
   private final Joystick driver = new Joystick(0);
+  
 
   /* Drive Controls */
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -35,6 +36,10 @@ public class RobotContainer {
       new JoystickButton(driver, XboxController.Button.kY.value);
   private final JoystickButton robotCentric =
       new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+      private final JoystickButton module =
+      new JoystickButton(driver, XboxController.Button.kA.value);
+  private final JoystickButton set0 =
+      new JoystickButton(driver, XboxController.Button.kX.value);
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
@@ -57,6 +62,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
     /* Driver Buttons */
     zeroGyro.whenPressed(new InstantCommand(() -> s_Swerve.zeroGyro()));
+    module.toggleOnTrue(new InstantCommand(()-> s_Swerve.module())  );
+    set0.toggleOnTrue(new InstantCommand(()-> s_Swerve.set0()));
     
   }
 
