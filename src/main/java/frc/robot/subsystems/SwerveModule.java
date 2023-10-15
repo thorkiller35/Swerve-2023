@@ -77,6 +77,8 @@ public double getTurningPosition() {
 public double getDriveVelocity() {
     return driveEncoder.getVelocity();
 }
+
+
  
 public double getTurningVelocity() {
     return angleEncoder.getVelocity();
@@ -110,11 +112,12 @@ public double getTurningVelocity() {
 }
   public void resetToAbsolute() {
     waitForCanCoder();
-    double absolutePosition = getCanCoder().getDegrees() - angleOffset.getDegrees();
+    double absolutePosition = getCanCoder().getRadians() - angleOffset.getRadians();
     integratedAngleEncoder.setPosition(absolutePosition);
   }
   public void set0(){
     angleEncoder.setPosition(0);
+    integratedAngleEncoder.setPosition(0);
   }
  
   private void configAngleEncoder() {
@@ -177,16 +180,16 @@ public double getTurningVelocity() {
             ? lastAngle
             : desiredState.angle;
  
-    angleController.setReference(angle.getDegrees(), ControlType.kPosition);
+    angleController.setReference(angle.getRadians(), ControlType.kPosition);
     lastAngle = angle;
   }
  
   private Rotation2d getAngle() {
-    return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
+    return Rotation2d.fromRadians(integratedAngleEncoder.getPosition());
   }
  
   public Rotation2d getCanCoder() {
-    return Rotation2d.fromDegrees(angleEncoder.getPosition());
+    return Rotation2d.fromRadians(angleEncoder.getPosition());
   }
   
  
